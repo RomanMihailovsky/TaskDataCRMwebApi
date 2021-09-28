@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+
 
 namespace TaskDataCRMwebApi.Models
 {
@@ -35,10 +33,6 @@ namespace TaskDataCRMwebApi.Models
 
         [JsonProperty("new_type")]
         public string TypeTask { get; set; }
-
-        //[JsonProperty("new_typelabel")]
-        //public string TypeTaskLabel { get; set; }
-
     }
 
 }
