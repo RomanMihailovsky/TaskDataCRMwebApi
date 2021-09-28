@@ -1,16 +1,13 @@
-﻿using Microsoft.Ajax.Utilities;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
+﻿using Microsoft.Xrm.Sdk.Query;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Results;
 using TaskDataCRMwebApi.Models;
-using System.Text.Json;
 using CrmEarlyBound;
+
 
 namespace TaskDataCRMwebApi.Controllers
 {
@@ -20,7 +17,7 @@ namespace TaskDataCRMwebApi.Controllers
         
         // ============= GET api/tasks/number(string) - номер задачи
         [Route("api/task/{number}")]
-        public string GetTask(string number)
+        public IHttpActionResult GetTask(string number)
         {
             QueryExpression query = new QueryExpression
             {
@@ -29,17 +26,24 @@ namespace TaskDataCRMwebApi.Controllers
             };
 
             new_task newtask = dc.Service.RetrieveMultiple(query)
-                .Entities.Select(e => e.ToEntity<new_task>())
-                .Where(p => p.new_number == number)
+                .Entities
+                .Select(e => e.ToEntity<new_task>())
+                .Where(e => e.new_number == number)
                 .FirstOrDefault();
 
-            string jsonresstring = (newtask == null) ? "Нет записей" : JsonConvert.SerializeObject(SetPropClassResp(newtask));
-            return jsonresstring;
+            if (newtask == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Json(SetPropClassResp(newtask));
+            }
 
         }
 
         // ============= GET api/tasks/endDate (DateTime)  completed (bool) 
-        public string GetTask(DateTime enddate, bool completed)
+        public IHttpActionResult GetTask(DateTime enddate, bool completed)
         {
             QueryExpression query = new QueryExpression
             {
@@ -52,18 +56,23 @@ namespace TaskDataCRMwebApi.Controllers
                   .Where(p => p.new_enddate < enddate);
 
             if (completed)
+            {
                 newtasks = newtasks.Where(p => p.new_completed == true);
+            }
             else
+            {
                 newtasks = dc.Service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<new_task>());
+            }
 
             List<TaskRespModel> taskrespmodellist = new List<TaskRespModel>();
 
             foreach (var newtask in newtasks)
+            {
                 taskrespmodellist.Add(SetPropClassResp(newtask));
+            }
 
-            string jsonresstring = JsonConvert.SerializeObject(taskrespmodellist);
+            return Json(taskrespmodellist);
 
-            return jsonresstring;
         }
 
         private TaskRespModel SetPropClassResp(new_task newtask)
@@ -79,9 +88,15 @@ namespace TaskDataCRMwebApi.Controllers
             taskresp.PersonInit = newtask.new_personinit.Name;
             taskresp.Completed = newtask.new_completed;
 
-            foreach (var item in newtask.FormattedValues)
-                if (item.Key == "new_type")
-                    taskresp.TypeTask = item.Value;
+            taskresp.TypeTask = newtask.FormattedValues["new_type"];
+
+            //foreach (var item in newtask.FormattedValues)
+            //{
+            //    if (item.Key == "new_type")
+            //    {
+            //        taskresp.TypeTask = item.Value;
+            //    }
+            //}
 
             return taskresp;
         }
