@@ -23,8 +23,7 @@ namespace TaskDataCRMwebApi.Controllers
             };
 
             new_task newtask = dc.Service.RetrieveMultiple(query)
-                .Entities
-                .Select(e => e.ToEntity<new_task>())
+                .Entities.Select(e => e.ToEntity<new_task>())
                 .Where(e => e.new_number == number)
                 .FirstOrDefault();
 
@@ -68,7 +67,6 @@ namespace TaskDataCRMwebApi.Controllers
             }
 
             return Json(taskrespmodellist);
-
         }
 
         private TaskRespModel SetPropClassResp(new_task newtask)
@@ -84,10 +82,12 @@ namespace TaskDataCRMwebApi.Controllers
             taskresp.PersonInit = newtask.new_personinit.Name;
             taskresp.Completed = newtask.new_completed;
 
-            taskresp.TypeTask = newtask.FormattedValues["new_type"];
+            if (newtask.new_type.HasValue)
+            {
+                taskresp.TypeTask = AttMetadata.GetOptionSetValueLabel("new_task", "new_type", (int)newtask.new_type, dc.Service);
+            }
 
             return taskresp;
         }
-
     }
 }

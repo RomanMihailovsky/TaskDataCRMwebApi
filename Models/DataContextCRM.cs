@@ -3,7 +3,6 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Tooling.Connector;
 using System.Configuration;
 
-
 namespace TaskDataCRMwebApi.Models
 {
     public class DataContextCRM
@@ -20,7 +19,5 @@ namespace TaskDataCRMwebApi.Models
 
             Service = (IOrganizationService)proxy;
         }
-
     }
-
 }

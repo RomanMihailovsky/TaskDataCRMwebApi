@@ -198,6 +198,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AttMetadata.cs" />
     <Compile Include="Models\DataContextCRM.cs" />
     <Compile Include="Models\TaskRespModel.cs" />
     <Compile Include="CrmEarlyBound\OptionSets.cs" />

@@ -4,7 +4,6 @@ using System;
 
 namespace TaskDataCRMwebApi.Models
 {
-    
     public class TaskRespModel
     {
         [JsonProperty("new_name")]
